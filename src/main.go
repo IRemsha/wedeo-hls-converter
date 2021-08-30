@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
     var stanConnection stan.Conn
 
     subscribe := func() {

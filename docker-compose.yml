@@ -1,0 +1,11 @@
+version: "3.4"
+
+services: 
+  app:
+    container_name: app
+    build: ./src
+    volumes:
+      - static_volume:/src/static/
+
+volumes:
+  static_volume:
