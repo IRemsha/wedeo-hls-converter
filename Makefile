@@ -9,8 +9,14 @@ up:
 down:
 	docker-compose down
 
+logs:
+	docker logs -f app
+
+bash:
+	docker exec -it app bash
+
 run:
-	go run main.go
+	go run /src/app/main.go
 
 load:
 	mc cp myphoto.jpg myminio/images
