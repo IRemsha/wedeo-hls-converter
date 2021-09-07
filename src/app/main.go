@@ -13,6 +13,7 @@ import (
     "github.com/joho/godotenv"
 )
 
+const pathToInputDir = "app/input"
 const pathToOutputDir = "app/output"
 const minioPreffix = "videos/"
 
@@ -59,28 +60,31 @@ func main() {
         }
         
         for _, val := range notificationInfo.Records {
-            var pathToNewFile = val.S3.Object.Key
-            var fileName = path.Base(pathToNewFile)
+            var pathToNewFileInMinio = val.S3.Object.Key
+            var fileName = path.Base(pathToNewFileInMinio)
 
-            pathToOutputFile := fmt.Sprintf("app/input/%s, fileName")
-            err = minioClient.FGetObject(goDotEnvVariable("MINIO_BUCKET"), pathToNewFile, pathToOutputFile, minio.GetObjectOptions{})
+            localPathToNewFile := fmt.Sprintf("%s/%s", pathToInputDir, fileName)
+            err = minioClient.FGetObject(goDotEnvVariable("MINIO_BUCKET"), pathToNewFileInMinio, localPathToNewFile, minio.GetObjectOptions{})
             if err != nil {
                 log.Println(err)
                 return
             }
-            log.Printf("Success download file %s to %s\n", fileName, pathToOutputFile)
+            log.Printf("Success download file %s to %s\n", fileName, localPathToNewFile)
 
             videoTitle := strings.Split(fileName, ".")[0]
             
             start := time.Now()
             log.Println("Start convert video:")
-            err := ConvertVideo(pathToOutputFile, pathToOutputDir)
+            err := ConvertVideo(localPathToNewFile, pathToOutputDir)
             if err != nil {
                 log.Println(err)
                 return
             }
             elapsed := time.Since(start)
             log.Printf("Complete convert %s in %s\n", fileName, elapsed.String())
+
+            os.RemoveAll(localPathToNewFile)
+            log.Printf("File %s delete", localPathToNewFile)
 
             log.Printf("Start upload %s\n", fileName)
             files, err := ioutil.ReadDir(pathToOutputDir)
