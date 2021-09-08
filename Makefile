@@ -10,10 +10,10 @@ down:
 	docker-compose down
 
 logs:
-	docker logs -f app
+	docker logs -f wedeo__hls_converter
 
 bash:
-	docker exec -it app bash
+	docker exec -it wedeo__hls_converter bash
 
 run:
 	go run /src/app/main.go

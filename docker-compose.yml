@@ -2,10 +2,11 @@ version: "3.4"
 
 services: 
   app:
-    container_name: app
+    container_name: wedeo__hls_converter
     build: ./src
     volumes:
       - static_volume:/src/static/
+    restart: always
 
 volumes:
   static_volume:
