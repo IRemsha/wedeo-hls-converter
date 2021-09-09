@@ -13,8 +13,8 @@ import (
     "github.com/joho/godotenv"
 )
 
-const pathToInputDir = "app/input"
-const pathToOutputDir = "app/output"
+const pathToInputDir = "/app/input"
+const pathToOutputDir = "/app/output"
 const minioPreffix = "videos/"
 
 func goDotEnvVariable(key string) string {
@@ -25,7 +25,20 @@ func goDotEnvVariable(key string) string {
     return os.Getenv(key)
 }
 
+func ensureDir(dirName string) error {
+    err := os.Mkdir(dirName, os.ModeDir)
+    if err == nil || os.IsExist(err) {
+        return nil
+    } else {
+        return err
+    }
+}
+
 func ConvertVideo(pathToFile string, pathToOutputDir string) error {
+    if err := ensureDir(pathToOutputDir); err != nil {
+        log.Printf("Directory creation failed with error: %s", err.Error())
+        os.Exit(1)
+    }
     pathToOutputFile := pathToOutputDir + "/output.m3u8"
 	cmd := exec.Command(
 		"ffmpeg",
