@@ -43,6 +43,7 @@ func ConvertVideo(pathToFile string, pathToOutputDir string) error {
 	cmd := exec.Command(
 		"ffmpeg",
 		"-i", pathToFile,
+		"-c:a", "aac", "-ac",  "2",
 		"-start_number", "0",
 		"-hls_time", "10",
 		"-hls_list_size", "0",
